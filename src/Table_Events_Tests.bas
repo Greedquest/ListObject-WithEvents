@@ -6,20 +6,21 @@ Option Private Module
 '@TestModule
 '@Folder("Tests")
 
-Private assert As Rubberduck.PermissiveAssertClass
+Private Assert As Rubberduck.PermissiveAssertClass
+'@Ignore VariableNotUsed
 Private Fakes As Rubberduck.FakesProvider
 
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     'this method runs once per module.
-    Set assert = New Rubberduck.PermissiveAssertClass
+    Set Assert = New Rubberduck.PermissiveAssertClass
     Set Fakes = New Rubberduck.FakesProvider
 End Sub
 
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     'this method runs once per module.
-    Set assert = Nothing
+    Set Assert = Nothing
     Set Fakes = Nothing
 End Sub
 
@@ -41,17 +42,17 @@ Private Sub TestManuallyRaiseEvent()
     eventsSource.RaiseColumnNameChanged eventRange
 
     'Assert:
-    assert.AreEqual counter.EventClasses, idColNameChange, "unexpected event happened"
+    Assert.AreEqual counter.EventClasses, idColNameChange, "unexpected event happened"
     With counter.logEntry(idColNameChange)
-        assert.AreEqual 1, .Count
-        TestUtils.AreRangesSame assert, eventRange, .Item(1)
+        Assert.AreEqual 1, .Count
+        TestUtils.AreRangesSame Assert, eventRange, .Item(1)
     End With
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -74,13 +75,13 @@ Private Sub TestManuallyRaiseEventMultipleTimes()
         eventsSource.RaiseColumnNameChanged eventRange
     Next i
     'Assert:
-    assert.AreEqual numberOfEvents, counter.logEntry(idColNameChange).Count
+    Assert.AreEqual numberOfEvents, counter.logEntry(idColNameChange).Count
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 

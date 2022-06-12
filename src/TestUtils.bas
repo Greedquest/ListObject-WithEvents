@@ -5,11 +5,11 @@ Option Explicit
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Public Sub AreRangesSame( _
-       ByVal assert As Rubberduck.PermissiveAssertClass, _
+       ByVal Assert As Rubberduck.PermissiveAssertClass, _
        ByVal expected As Range, _
        ByVal actual As Range _
        )
-    assert.AreEqual _
+    Assert.AreEqual _
         expected.Address(external:=True), _
         actual.Address(external:=True), _
         printf( _
@@ -20,21 +20,21 @@ Public Sub AreRangesSame( _
 End Sub
 
 Public Sub AreListRowsSame( _
-       ByVal assert As Rubberduck.PermissiveAssertClass, _
+       ByVal Assert As Rubberduck.PermissiveAssertClass, _
        ByVal expected As ListRow, _
        ByVal actual As ListRow _
        )
-    assert.AreEqual expected.Index, actual.Index, "List row index mismatch"
-    AreRangesSame assert, expected.Range, actual.Range
+    Assert.AreEqual expected.Index, actual.Index, "List row index mismatch"
+    AreRangesSame Assert, expected.Range, actual.Range
 End Sub
 
 Public Sub AreListColumnsSame( _
-       ByVal assert As Rubberduck.PermissiveAssertClass, _
+       ByVal Assert As Rubberduck.PermissiveAssertClass, _
        ByVal expected As ListColumn, _
        ByVal actual As ListColumn _
        )
-    assert.AreEqual expected.Index, actual.Index, "List column index mismatch"
-    AreRangesSame assert, expected.Range, actual.Range
+    Assert.AreEqual expected.Index, actual.Index, "List column index mismatch"
+    AreRangesSame Assert, expected.Range, actual.Range
 End Sub
 
 '@Ignore AssignedByValParameter: by design

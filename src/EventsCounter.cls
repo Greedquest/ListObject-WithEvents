@@ -16,10 +16,16 @@ Attribute events.VB_VarHelpID = -1
 
 Private eventsLog As New Dictionary
 
-
+Public Enum EventIDS
+    idNone = 0
+    idRowAdded = 2 ^ 0
+    idColAdded = 2 ^ 1
+    idColNameChange = 2 ^ 2
+End Enum
 
 '@Description "Bit mask for the types of events raised"
 Public Property Get EventClasses() As EventIDS
+Attribute EventClasses.VB_Description = "Bit mask for the types of events raised"
     Dim eventID As Variant
     Dim result As EventIDS
     result = idNone
@@ -51,4 +57,3 @@ End Sub
 Private Sub Events_RowAdded(ByVal where As ListRow)
     logEntry(idRowAdded).Add where
 End Sub
-

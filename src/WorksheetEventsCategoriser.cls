@@ -42,6 +42,7 @@ Private Function TargetToListColumn(ByVal WrappedTable As ListObject, ByVal targ
     colIndex = relativeToOrigin(WrappedTable, target, byCol:=True) + 1
     Debug.Assert colIndex >= 0
     Debug.Assert colIndex <= WrappedTable.ListColumns.Count
+    '@Ignore IndexedDefaultMemberAccess
     Set TargetToListColumn = WrappedTable.ListColumns(colIndex)
 End Function
 
@@ -50,7 +51,7 @@ Private Function TargetToListRow(ByVal WrappedTable As ListObject, ByVal target 
     rowIndex = relativeToOrigin(WrappedTable, target, byCol:=False) 'no +1 because of headers
     Debug.Assert rowIndex >= 0
     Debug.Assert rowIndex <= WrappedTable.ListRows.Count 'BUG adding a Total Row
+    '@Ignore IndexedDefaultMemberAccess
     Set TargetToListRow = WrappedTable.ListRows(rowIndex)
 End Function
-
 

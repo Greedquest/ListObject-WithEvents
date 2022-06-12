@@ -53,6 +53,7 @@ End Function
 
 '@Description "Returns table if it exists otherwise Nothing"
 Public Property Get WrappedTable() As ListObject
+Attribute WrappedTable.VB_Description = "Returns table if it exists otherwise Nothing"
     If this.unsafeWrappedTable Is Nothing Then Exit Property
     If Not isTableConnected Then Set Me.WrappedTable = Nothing
     Set WrappedTable = this.unsafeWrappedTable
@@ -89,11 +90,6 @@ Friend Sub Init(ByVal srcTable As ListObject, ByVal eventsCategoriser As IWorksh
     End If
 End Sub
 
-Private Property Get events() As ITableEventsSource
-    Set events = Me
-End Property
-
 Private Sub parentSheet_Change(ByVal target As Range)
     this.eventsCategoriser.CategoriseChange Me, target, WrappedTable
 End Sub
-

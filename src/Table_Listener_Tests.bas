@@ -6,7 +6,7 @@ Option Private Module
 '@TestModule
 '@Folder("Tests")
 
-Private assert As Rubberduck.PermissiveAssertClass
+Private Assert As Rubberduck.PermissiveAssertClass
 '@Ignore VariableNotUsed
 Private Fakes As Rubberduck.FakesProvider
 Private srcTable As ListObject
@@ -15,14 +15,14 @@ Private srcTable As ListObject
 Private Sub ModuleInitialize()
     'this method runs once per module.
     TestSheet.Reset
-    Set assert = New Rubberduck.PermissiveAssertClass
+    Set Assert = New Rubberduck.PermissiveAssertClass
     Set Fakes = New Rubberduck.FakesProvider
 End Sub
 
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     'this method runs once per module.
-    Set assert = Nothing
+    Set Assert = Nothing
     Set Fakes = Nothing
 End Sub
 
@@ -42,13 +42,13 @@ Private Sub TestAddInstance()
     On Error GoTo TestFail
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
-    assert.AreSame srcTable, table.WrappedTable
+    Assert.AreSame srcTable, table.WrappedTable
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -58,14 +58,14 @@ Private Sub TestDeleteTable()
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
     srcTable.Delete
-    assert.IsNothing table.WrappedTable
+    Assert.IsNothing table.WrappedTable
     'Assert.IsNothing table.WrappedTable 'ensure it stays deleted
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -75,8 +75,8 @@ Private Sub TestNullTableReference()
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
     Set table.WrappedTable = Nothing
-    assert.IsNothing table.WrappedTable
-    assert.IsNothing table.wrappedTableParent
+    Assert.IsNothing table.WrappedTable
+    Assert.IsNothing table.wrappedTableParent
 
     'Assert.IsNothing table.WrappedTable 'ensure it stays deleted
 TestExit:
@@ -84,7 +84,7 @@ TestExit:
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -94,16 +94,16 @@ Private Sub TestDelete_RestoreTable()
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
     srcTable.Delete
-    assert.IsNothing table.WrappedTable
+    Assert.IsNothing table.WrappedTable
     TestSheet.Reset
     Set srcTable = TestSheet.DemoTable
-    assert.IsNothing table.WrappedTable          'ensure it stays deleted
+    Assert.IsNothing table.WrappedTable          'ensure it stays deleted
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -112,13 +112,13 @@ Private Sub TestGetEventsObject()
     On Error GoTo TestFail
     Dim table As ITableEventsSource
     Set table = TableWatcher.Create(srcTable)
-    assert.IsNotNothing table
+    Assert.IsNotNothing table
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -131,15 +131,16 @@ Private Sub TestUnrelatedChangeInWorksheetHasNoEffect()
     Dim counter As New EventsCounter
     Set counter.events = table
 
+    '@Ignore IndexedDefaultMemberAccess
     srcTable.ListColumns(srcTable.ListColumns.Count).Range.Offset(0, 1).Insert
 
-    assert.AreEqual 0, counter.Log.Count, "too many events raised"
+    Assert.AreEqual 0, counter.Log.Count, "too many events raised"
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -154,16 +155,16 @@ Private Sub TestAddRow()
 
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add
-    assert.AreEqual idRowAdded, counter.EventClasses, "Only 1 kind of event should have been raised"
-    assert.AreEqual 1, counter.logEntry(idRowAdded).Count, "Count wrong"
-    AreListRowsSame assert, newRow, counter.logEntry(idRowAdded).Item(1)
+    Assert.AreEqual idRowAdded, counter.EventClasses, "Only 1 kind of event should have been raised"
+    Assert.AreEqual 1, counter.logEntry(idRowAdded).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, counter.logEntry(idRowAdded).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -178,16 +179,16 @@ Private Sub TestInsertRow()
 
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add(srcTable.ListRows.Count \ 2)
-    assert.AreEqual idRowAdded, counter.EventClasses, "Only 1 kind of event should have been raised"
-    assert.AreEqual 1, counter.logEntry(idRowAdded).Count, "Count wrong"
-    AreListRowsSame assert, newRow, counter.logEntry(idRowAdded).Item(1)
+    Assert.AreEqual idRowAdded, counter.EventClasses, "Only 1 kind of event should have been raised"
+    Assert.AreEqual 1, counter.logEntry(idRowAdded).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, counter.logEntry(idRowAdded).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -202,18 +203,19 @@ Private Sub TestColAdded()
 
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add
-    assert.AreEqual idColAdded + idColNameChange, counter.EventClasses, "Wrong event types raised"
-    assert.AreEqual 1, counter.logEntry(idColAdded).Count, " Col add count wrong"
-    assert.AreEqual 1, counter.logEntry(idColNameChange).Count, "Name change count wrong"
-    AreListColumnsSame assert, newCol, counter.logEntry(idColAdded).Item(1)
-    AreRangesSame assert, newCol.Range.Cells(1), counter.logEntry(idColNameChange).Item(1)
+    Assert.AreEqual idColAdded + idColNameChange, counter.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, counter.logEntry(idColAdded).Count, " Col add count wrong"
+    Assert.AreEqual 1, counter.logEntry(idColNameChange).Count, "Name change count wrong"
+    AreListColumnsSame Assert, newCol, counter.logEntry(idColAdded).Item(1)
+    '@Ignore IndexedDefaultMemberAccess
+    AreRangesSame Assert, newCol.Range.Cells(1), counter.logEntry(idColNameChange).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
@@ -228,18 +230,19 @@ Private Sub TestInsertCol()
 
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add(srcTable.ListColumns.Count \ 2)
-    assert.AreEqual idColAdded + idColNameChange, counter.EventClasses, "Wrong event types raised"
-    assert.AreEqual 1, counter.logEntry(idColAdded).Count, " Col add count wrong"
-    assert.AreEqual 1, counter.logEntry(idColNameChange).Count, "Name change count wrong"
-    AreListColumnsSame assert, newCol, counter.logEntry(idColAdded).Item(1)
-    AreRangesSame assert, newCol.Range.Cells(1), counter.logEntry(idColNameChange).Item(1)
+    Assert.AreEqual idColAdded + idColNameChange, counter.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, counter.logEntry(idColAdded).Count, " Col add count wrong"
+    Assert.AreEqual 1, counter.logEntry(idColNameChange).Count, "Name change count wrong"
+    AreListColumnsSame Assert, newCol, counter.logEntry(idColAdded).Item(1)
+    '@Ignore IndexedDefaultMemberAccess
+    AreRangesSame Assert, newCol.Range.Cells(1), counter.logEntry(idColNameChange).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
     Exit Sub
 TestFail:
-    assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
 
