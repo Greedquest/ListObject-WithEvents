@@ -1,0 +1,14 @@
+﻿'@Folder "Testing"
+Option Explicit
+
+Private Const TABLE_NAME As String = "TestTable"
+
+Friend Property Get DemoTable() As ListObject
+    Set DemoTable = Me.ListObjects.Item(TABLE_NAME)
+End Property
+
+Friend Sub Reset()
+    Me.UsedRange.EntireColumn.Delete
+    DemoSheet.DemoTable.Range.Copy Me.Range("A1")
+    Me.ListObjects.Item(1).name = TABLE_NAME
+End Sub

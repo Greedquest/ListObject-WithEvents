@@ -1,0 +1,6 @@
+﻿'@Folder "Testing"
+Option Explicit
+
+Friend Property Get DemoTable() As ListObject
+    Set DemoTable = Me.ListObjects.Item("DemoTable")
+End Property

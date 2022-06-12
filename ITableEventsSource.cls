@@ -1,0 +1,23 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "ITableEventsSource"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Explicit
+
+'@Folder("VBAProject")
+'@Interface
+
+Public Sub RaiseRowAdded(ByVal where As ListRow)
+End Sub
+
+Public Sub RaiseColumnAdded(ByVal where As ListColumn)
+End Sub
+
+Public Sub RaiseColumnNameChanged(ByVal which As Range)
+End Sub
+
