@@ -10,6 +10,11 @@ Private Assert As Rubberduck.PermissiveAssertClass
 '@Ignore VariableNotUsed
 Private Fakes As Rubberduck.FakesProvider
 Private srcTable As ListObject
+Private watcher As EventsWatcher
+
+Private Property Get logger() As LoggingEventSink
+    Set logger = watcher.logger
+End Property
 
 '@ModuleInitialize
 Private Sub ModuleInitialize()
@@ -29,10 +34,13 @@ End Sub
 '@TestInitialize
 Private Sub TestInitialize()
     Set srcTable = TestSheet.DemoTable
+    Set watcher = New EventsWatcher
+    Set watcher.logger = New LoggingEventSink
 End Sub
 
 '@TestCleanup
 Private Sub TestCleanup()
+    Set watcher = Nothing
     Set srcTable = Nothing
     TestSheet.Reset
 End Sub
@@ -128,13 +136,13 @@ Private Sub TestUnrelatedChangeInWorksheetHasNoEffect()
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
 
-    Dim counter As New EventsCounter
-    Set counter.events = table
+    Set watcher.events = table
+
 
     '@Ignore IndexedDefaultMemberAccess
     srcTable.ListColumns(srcTable.ListColumns.Count).Range.Offset(0, 1).Insert
 
-    Assert.AreEqual 0, counter.Log.Count, "too many events raised"
+    Assert.AreEqual 0, logger.log.Count, "too many events raised"
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next
@@ -150,14 +158,14 @@ Private Sub TestAddRow()
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
 
-    Dim counter As New EventsCounter
-    Set counter.events = table
+    Set watcher.events = table
+
 
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add
-    Assert.AreEqual idRowAdded, counter.EventClasses, "Only 1 kind of event should have been raised"
-    Assert.AreEqual 1, counter.logEntry(idRowAdded).Count, "Count wrong"
-    AreListRowsSame Assert, newRow, counter.logEntry(idRowAdded).Item(1)
+    Assert.AreEqual idRowAdded, logger.EventClasses, "Only 1 kind of event should have been raised"
+    Assert.AreEqual 1, logger.logEntry(idRowAdded).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, logger.logEntry(idRowAdded).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -174,14 +182,13 @@ Private Sub TestInsertRow()
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
 
-    Dim counter As New EventsCounter
-    Set counter.events = table
+    Set watcher.events = table
 
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add(srcTable.ListRows.Count \ 2)
-    Assert.AreEqual idRowAdded, counter.EventClasses, "Only 1 kind of event should have been raised"
-    Assert.AreEqual 1, counter.logEntry(idRowAdded).Count, "Count wrong"
-    AreListRowsSame Assert, newRow, counter.logEntry(idRowAdded).Item(1)
+    Assert.AreEqual idRowAdded, logger.EventClasses, "Only 1 kind of event should have been raised"
+    Assert.AreEqual 1, logger.logEntry(idRowAdded).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, logger.logEntry(idRowAdded).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -198,17 +205,16 @@ Private Sub TestColAdded()
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
 
-    Dim counter As New EventsCounter
-    Set counter.events = table
+    Set watcher.events = table
 
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add
-    Assert.AreEqual idColAdded + idColNameChange, counter.EventClasses, "Wrong event types raised"
-    Assert.AreEqual 1, counter.logEntry(idColAdded).Count, " Col add count wrong"
-    Assert.AreEqual 1, counter.logEntry(idColNameChange).Count, "Name change count wrong"
-    AreListColumnsSame Assert, newCol, counter.logEntry(idColAdded).Item(1)
+    Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idColAdded).Count, " Col add count wrong"
+    Assert.AreEqual 1, logger.logEntry(idColNameChange).Count, "Name change count wrong"
+    AreListColumnsSame Assert, newCol, logger.logEntry(idColAdded).Item(1)
     '@Ignore IndexedDefaultMemberAccess
-    AreRangesSame Assert, newCol.Range.Cells(1), counter.logEntry(idColNameChange).Item(1)
+    AreRangesSame Assert, newCol.Range.Cells(1), logger.logEntry(idColNameChange).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -225,17 +231,16 @@ Private Sub TestInsertCol()
     Dim table As TableWatcher
     Set table = TableWatcher.Create(srcTable)
 
-    Dim counter As New EventsCounter
-    Set counter.events = table
+    Set watcher.events = table
 
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add(srcTable.ListColumns.Count \ 2)
-    Assert.AreEqual idColAdded + idColNameChange, counter.EventClasses, "Wrong event types raised"
-    Assert.AreEqual 1, counter.logEntry(idColAdded).Count, " Col add count wrong"
-    Assert.AreEqual 1, counter.logEntry(idColNameChange).Count, "Name change count wrong"
-    AreListColumnsSame Assert, newCol, counter.logEntry(idColAdded).Item(1)
+    Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idColAdded).Count, " Col add count wrong"
+    Assert.AreEqual 1, logger.logEntry(idColNameChange).Count, "Name change count wrong"
+    AreListColumnsSame Assert, newCol, logger.logEntry(idColAdded).Item(1)
     '@Ignore IndexedDefaultMemberAccess
-    AreRangesSame Assert, newCol.Range.Cells(1), counter.logEntry(idColNameChange).Item(1)
+    AreRangesSame Assert, newCol.Range.Cells(1), logger.logEntry(idColNameChange).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext

@@ -9,6 +9,11 @@ Option Private Module
 Private Assert As Rubberduck.PermissiveAssertClass
 '@Ignore VariableNotUsed
 Private Fakes As Rubberduck.FakesProvider
+Private watcher As EventsWatcher
+
+Private Property Get logger() As LoggingEventSink
+    Set logger = watcher.logger
+End Property
 
 '@ModuleInitialize
 Private Sub ModuleInitialize()
@@ -24,6 +29,17 @@ Private Sub ModuleCleanup()
     Set Fakes = Nothing
 End Sub
 
+'@TestInitialize
+Private Sub TestInitialize()
+    Set watcher = New EventsWatcher
+    Set watcher.logger = New LoggingEventSink
+End Sub
+
+'@TestCleanup
+Private Sub TestCleanup()
+    Set watcher = Nothing
+End Sub
+
 '@TestMethod("Uncategorized")
 Private Sub TestManuallyRaiseEvent()
     On Error GoTo TestFail
@@ -35,15 +51,14 @@ Private Sub TestManuallyRaiseEvent()
     Dim eventsSource As ITableEventsSource
     Set eventsSource = New TableWatcher
 
-    Dim counter As New EventsCounter
-    Set counter.events = eventsSource
+    Set watcher.events = eventsSource
 
     'Act:
     eventsSource.RaiseColumnNameChanged eventRange
 
     'Assert:
-    Assert.AreEqual counter.EventClasses, idColNameChange, "unexpected event happened"
-    With counter.logEntry(idColNameChange)
+    Assert.AreEqual logger.EventClasses, idColNameChange, "unexpected event happened"
+    With logger.logEntry(idColNameChange)
         Assert.AreEqual 1, .Count
         TestUtils.AreRangesSame Assert, eventRange, .Item(1)
     End With
@@ -66,8 +81,7 @@ Private Sub TestManuallyRaiseEventMultipleTimes()
     Dim eventsSource As ITableEventsSource
     Set eventsSource = New TableWatcher
 
-    Dim counter As New EventsCounter
-    Set counter.events = eventsSource
+    Set watcher.events = eventsSource
     'Act:
     Const numberOfEvents As Long = 5
     Dim i As Long
@@ -75,7 +89,7 @@ Private Sub TestManuallyRaiseEventMultipleTimes()
         eventsSource.RaiseColumnNameChanged eventRange
     Next i
     'Assert:
-    Assert.AreEqual numberOfEvents, counter.logEntry(idColNameChange).Count
+    Assert.AreEqual numberOfEvents, logger.logEntry(idColNameChange).Count
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next

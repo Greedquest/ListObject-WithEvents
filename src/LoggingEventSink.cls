@@ -2,17 +2,15 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "EventsCounter"
+Attribute VB_Name = "LoggingEventSink"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Testing")
-'@IgnoreModule EncapsulatePublicField
 Option Explicit
 
-Public WithEvents events As TableWatcher
-Attribute events.VB_VarHelpID = -1
+Implements ITableEventsSource
 
 Private eventsLog As New Dictionary
 
@@ -29,31 +27,31 @@ Attribute EventClasses.VB_Description = "Bit mask for the types of events raised
     Dim eventID As Variant
     Dim result As EventIDS
     result = idNone
-    For Each eventID In Log.Keys
+    For Each eventID In log.Keys
         result = result + CLng(eventID)
     Next eventID
     EventClasses = result
 End Property
 
-Public Property Get Log() As Dictionary
-    Set Log = eventsLog
+Public Property Get log() As Dictionary
+    Set log = eventsLog
 End Property
 
 Public Property Get logEntry(ByVal eventID As EventIDS) As Collection
-    If Not Log.Exists(eventID) Then
-        Set Log.Item(eventID) = New Collection
+    If Not log.Exists(eventID) Then
+        Set log.Item(eventID) = New Collection
     End If
-    Set logEntry = Log.Item(eventID)
+    Set logEntry = log.Item(eventID)
 End Property
 
-Private Sub Events_ColumnAdded(ByVal where As ListColumn)
+Private Sub ITableEventsSource_RaiseColumnAdded(ByVal where As ListColumn)
     logEntry(idColAdded).Add where
 End Sub
 
-Private Sub Events_ColumnNameChanged(ByVal which As Range)
+Private Sub ITableEventsSource_RaiseColumnNameChanged(ByVal which As Range)
     logEntry(idColNameChange).Add which
 End Sub
 
-Private Sub Events_RowAdded(ByVal where As ListRow)
+Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)
     logEntry(idRowAdded).Add where
 End Sub
