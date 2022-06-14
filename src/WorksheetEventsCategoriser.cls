@@ -18,8 +18,16 @@ End Sub
 Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As Range, ByVal table As ListObject)
     If table Is Nothing Then Exit Sub
     If Application.Intersect(target, table.Range) Is Nothing Then Exit Sub
-    If target.Cells.CountLarge = 1 Then
+    If target.Cells.CountLarge = 1 And Not Application.Intersect(target, table.HeaderRowRange) Is Nothing Then
         events.RaiseColumnNameChanged target
+        Exit Sub
+    End If
+    'cell in final row or column
+    If IndexRelativeToOrigin(table, target, byCol:=False) = table.ListRows.Count Then
+        events.RaiseRowAdded TargetToListRow(table, target)
+    ElseIf IndexRelativeToOrigin(table, target, byCol:=True) = table.ListColumns.Count Then
+        events.RaiseColumnAdded TargetToListColumn(table, target)
+    'entire row or column
     ElseIf target.Rows.CountLarge = 1 Then
         events.RaiseRowAdded TargetToListRow(table, target)
     ElseIf target.Columns.CountLarge = 1 Then
@@ -28,30 +36,3 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
         Debug.Assert False                       'not implemented
     End If
 End Sub
-
-Private Function relativeToOrigin(ByVal WrappedTable As ListObject, ByVal target As Range, ByVal byCol As Boolean) As Long
-    If byCol Then
-        relativeToOrigin = target.Column - WrappedTable.Range.Column
-    Else
-        relativeToOrigin = target.Row - WrappedTable.Range.Row
-    End If
-End Function
-
-Private Function TargetToListColumn(ByVal WrappedTable As ListObject, ByVal target As Range) As ListColumn
-    Dim colIndex As Long
-    colIndex = relativeToOrigin(WrappedTable, target, byCol:=True) + 1
-    Debug.Assert colIndex >= 0
-    Debug.Assert colIndex <= WrappedTable.ListColumns.Count
-    '@Ignore IndexedDefaultMemberAccess
-    Set TargetToListColumn = WrappedTable.ListColumns(colIndex)
-End Function
-
-Private Function TargetToListRow(ByVal WrappedTable As ListObject, ByVal target As Range) As ListRow
-    Dim rowIndex As Long
-    rowIndex = relativeToOrigin(WrappedTable, target, byCol:=False) 'no +1 because of headers
-    Debug.Assert rowIndex >= 0
-    Debug.Assert rowIndex <= WrappedTable.ListRows.Count 'BUG adding a Total Row
-    '@Ignore IndexedDefaultMemberAccess
-    Set TargetToListRow = WrappedTable.ListRows(rowIndex)
-End Function
-

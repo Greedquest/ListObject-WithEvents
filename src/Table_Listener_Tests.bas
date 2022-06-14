@@ -200,6 +200,35 @@ TestFail:
 End Sub
 
 '@TestMethod("Events")
+Private Sub TestImplicitAppendRowAtEndOfDatabody()
+    On Error GoTo TestFail
+    Dim table As TableWatcher
+    Set table = TableWatcher.Create(srcTable)
+
+    Set watcher.events = table
+
+    Dim newRowTrigger As Range
+    Set newRowTrigger = srcTable.DataBodyRange.Cells(srcTable.ListRows.Count + 1, 1)
+    
+    newRowTrigger.Value2 = "Foo"
+    
+    Dim newRow As ListRow
+    Set newRow = ListObjectHelperMethods.TargetToListRow(srcTable, newRowTrigger)
+    
+    Assert.AreEqual idRowAdded, logger.EventClasses, "Wrong kind/ too many kinds of event raised"
+    Assert.AreEqual 1, logger.logEntry(idRowAdded).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, logger.logEntry(idRowAdded).Item(1)
+
+TestExit:
+    '@Ignore UnhandledOnErrorResumeNext
+    On Error Resume Next
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Resume TestExit
+End Sub
+
+'@TestMethod("Events")
 Private Sub TestColAdded()
     On Error GoTo TestFail
     Dim table As TableWatcher
@@ -235,6 +264,38 @@ Private Sub TestInsertCol()
 
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add(srcTable.ListColumns.Count \ 2)
+    Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idColAdded).Count, " Col add count wrong"
+    Assert.AreEqual 1, logger.logEntry(idColNameChange).Count, "Name change count wrong"
+    AreListColumnsSame Assert, newCol, logger.logEntry(idColAdded).Item(1)
+    '@Ignore IndexedDefaultMemberAccess
+    AreRangesSame Assert, newCol.Range.Cells(1), logger.logEntry(idColNameChange).Item(1)
+
+TestExit:
+    '@Ignore UnhandledOnErrorResumeNext
+    On Error Resume Next
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Resume TestExit
+End Sub
+
+'@TestMethod("Events")
+Private Sub TestImplicitAddColumnToRightEdge()
+    On Error GoTo TestFail
+    Dim table As TableWatcher
+    Set table = TableWatcher.Create(srcTable)
+
+    Set watcher.events = table
+
+    Dim newColTrigger As Range
+    Set newColTrigger = srcTable.DataBodyRange.Cells(srcTable.ListRows.Count \ 2, srcTable.ListColumns.Count + 1)
+    
+    newColTrigger.Value2 = "Foo"
+    
+    Dim newCol As ListColumn
+    Set newCol = ListObjectHelperMethods.TargetToListColumn(srcTable, newColTrigger)
+    
     Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
     Assert.AreEqual 1, logger.logEntry(idColAdded).Count, " Col add count wrong"
     Assert.AreEqual 1, logger.logEntry(idColNameChange).Count, "Name change count wrong"
