@@ -28,6 +28,10 @@ Private Sub Events_ColumnNameChanged(ByVal which As Range)
     loggerAsEventSource.RaiseColumnNameChanged which
 End Sub
 
+Private Sub events_DataValueChanged(ByVal where As Range)
+    loggerAsEventSource.RaiseDataValueChanged where
+End Sub
+
 Private Sub Events_RowAdded(ByVal where As ListRow)
     loggerAsEventSource.RaiseRowAdded where
 End Sub

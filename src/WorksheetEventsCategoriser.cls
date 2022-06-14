@@ -27,7 +27,9 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
         events.RaiseRowAdded TargetToListRow(table, target)
     ElseIf IndexRelativeToOrigin(table, target, byCol:=True) = table.ListColumns.Count Then
         events.RaiseColumnAdded TargetToListColumn(table, target)
-    'entire row or column
+    ElseIf target.Cells.CountLarge = 1 Then
+        events.RaiseDataValueChanged target
+        'entire row or column
     ElseIf target.Rows.CountLarge = 1 Then
         events.RaiseRowAdded TargetToListRow(table, target)
     ElseIf target.Columns.CountLarge = 1 Then

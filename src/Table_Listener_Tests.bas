@@ -312,3 +312,29 @@ TestFail:
     Resume TestExit
 End Sub
 
+'@TestMethod("Events")
+Private Sub TestValueChangedSingleCell()
+    On Error GoTo TestFail
+    Dim table As TableWatcher
+    Set table = TableWatcher.Create(srcTable)
+    Set watcher.events = table
+
+    Dim target As Range
+    Set target = srcTable.DataBodyRange.Cells(srcTable.ListColumns.Count \ 2, srcTable.ListColumns.Count \ 2)
+    target.Value2 = "foo"
+    
+    Assert.AreEqual idValueChanged, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idValueChanged).Count, "Event count wrong"
+    '@Ignore IndexedDefaultMemberAccess
+    AreRangesSame Assert, target, logger.logEntry(idValueChanged).Item(1)
+    
+
+TestExit:
+    '@Ignore UnhandledOnErrorResumeNext
+    On Error Resume Next
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Resume TestExit
+End Sub
+

@@ -19,6 +19,7 @@ Attribute parentSheet.VB_VarHelpID = -1
 Public Event RowAdded(ByVal where As ListRow)
 Public Event ColumnAdded(ByVal where As ListColumn)
 Public Event ColumnNameChanged(ByVal which As Range)
+Public Event DataValueChanged(ByVal where As Range)
 
 Private Type TTableWatcher
     unsafeWrappedTable As ListObject             'unsafe as it may become disconnected - use Get/Set instead
@@ -26,6 +27,10 @@ Private Type TTableWatcher
 End Type
 
 Private this As TTableWatcher
+
+Private Sub ITableEventsSource_RaiseDataValueChanged(ByVal where As Range)
+    RaiseEvent DataValueChanged(where)
+End Sub
 
 Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)
     RaiseEvent RowAdded(where)

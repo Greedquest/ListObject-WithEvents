@@ -19,6 +19,7 @@ Public Enum EventIDS
     idRowAdded = 2 ^ 0
     idColAdded = 2 ^ 1
     idColNameChange = 2 ^ 2
+    idValueChanged = 2 ^ 3
 End Enum
 
 '@Description "Bit mask for the types of events raised"
@@ -50,6 +51,10 @@ End Sub
 
 Private Sub ITableEventsSource_RaiseColumnNameChanged(ByVal which As Range)
     logEntry(idColNameChange).Add which
+End Sub
+
+Private Sub ITableEventsSource_RaiseDataValueChanged(ByVal where As Range)
+    logEntry(idValueChanged).Add where
 End Sub
 
 Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)

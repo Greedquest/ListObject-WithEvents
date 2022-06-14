@@ -21,3 +21,6 @@ End Sub
 Public Sub RaiseColumnNameChanged(ByVal which As Range)
 End Sub
 
+Public Sub RaiseDataValueChanged(ByVal where As Range)
+End Sub
+
