@@ -11,6 +11,7 @@ Private Assert As Rubberduck.PermissiveAssertClass
 Private Fakes As Rubberduck.FakesProvider
 Private srcTable As ListObject
 Private watcher As EventsWatcher
+Private table As TableWatcher
 
 Private Property Get logger() As LoggingEventSink
     Set logger = watcher.logger
@@ -36,6 +37,8 @@ Private Sub TestInitialize()
     Set srcTable = TestSheet.DemoTable
     Set watcher = New EventsWatcher
     Set watcher.logger = New LoggingEventSink
+    Set table = TableWatcher.Create(srcTable)
+    Set watcher.events = table
 End Sub
 
 '@TestCleanup
@@ -48,8 +51,6 @@ End Sub
 '@TestMethod("Uncategorized")
 Private Sub TestAddInstance()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
     Assert.AreSame srcTable, table.WrappedTable
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -63,8 +64,6 @@ End Sub
 '@TestMethod("Uncategorized")
 Private Sub TestDeleteTable()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
     srcTable.Delete
     Assert.IsNothing table.WrappedTable
     'Assert.IsNothing table.WrappedTable 'ensure it stays deleted
@@ -80,8 +79,6 @@ End Sub
 '@TestMethod("Uncategorized")
 Private Sub TestNullTableReference()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
     Set table.WrappedTable = Nothing
     Assert.IsNothing table.WrappedTable
     Assert.IsNothing table.wrappedTableParent
@@ -99,8 +96,6 @@ End Sub
 '@TestMethod("Uncategorized")
 Private Sub TestDelete_RestoreTable()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
     srcTable.Delete
     Assert.IsNothing table.WrappedTable
     TestSheet.Reset
@@ -116,29 +111,8 @@ TestFail:
 End Sub
 
 '@TestMethod("Events")
-Private Sub TestGetEventsObject()
-    On Error GoTo TestFail
-    Dim table As ITableEventsSource
-    Set table = TableWatcher.Create(srcTable)
-    Assert.IsNotNothing table
-TestExit:
-    '@Ignore UnhandledOnErrorResumeNext
-    On Error Resume Next
-    Exit Sub
-TestFail:
-    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
-    Resume TestExit
-End Sub
-
-'@TestMethod("Events")
 Private Sub TestUnrelatedChangeInWorksheetHasNoEffect()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
-
-    Set watcher.events = table
-
-
     '@Ignore IndexedDefaultMemberAccess
     srcTable.ListColumns(srcTable.ListColumns.Count).Range.Offset(0, 1).Insert
 
@@ -155,12 +129,6 @@ End Sub
 '@TestMethod("Events")
 Private Sub TestAddRow()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
-
-    Set watcher.events = table
-
-
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add
     Assert.AreEqual idRowAdded, logger.EventClasses, "Only 1 kind of event should have been raised"
@@ -179,11 +147,6 @@ End Sub
 '@TestMethod("Events")
 Private Sub TestInsertRow()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
-
-    Set watcher.events = table
-
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add(srcTable.ListRows.Count \ 2)
     Assert.AreEqual idRowAdded, logger.EventClasses, "Only 1 kind of event should have been raised"
@@ -202,11 +165,6 @@ End Sub
 '@TestMethod("Events")
 Private Sub TestImplicitAppendRowAtEndOfDatabody()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
-
-    Set watcher.events = table
-
     Dim newRowTrigger As Range
     Set newRowTrigger = srcTable.DataBodyRange.Cells(srcTable.ListRows.Count + 1, 1)
     
@@ -231,11 +189,6 @@ End Sub
 '@TestMethod("Events")
 Private Sub TestColAdded()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
-
-    Set watcher.events = table
-
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add
     Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
@@ -257,11 +210,6 @@ End Sub
 '@TestMethod("Events")
 Private Sub TestInsertCol()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
-
-    Set watcher.events = table
-
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add(srcTable.ListColumns.Count \ 2)
     Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
@@ -283,11 +231,6 @@ End Sub
 '@TestMethod("Events")
 Private Sub TestImplicitAddColumnToRightEdge()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
-
-    Set watcher.events = table
-
     Dim newColTrigger As Range
     Set newColTrigger = srcTable.DataBodyRange.Cells(srcTable.ListRows.Count \ 2, srcTable.ListColumns.Count + 1)
     
@@ -315,10 +258,6 @@ End Sub
 '@TestMethod("Events")
 Private Sub TestValueChangedSingleCell()
     On Error GoTo TestFail
-    Dim table As TableWatcher
-    Set table = TableWatcher.Create(srcTable)
-    Set watcher.events = table
-
     Dim target As Range
     Set target = srcTable.DataBodyRange.Cells(srcTable.ListColumns.Count \ 2, srcTable.ListColumns.Count \ 2)
     target.Value2 = "foo"
