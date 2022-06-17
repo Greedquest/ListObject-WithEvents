@@ -48,7 +48,7 @@ Private Sub TestCleanup()
     TestSheet.Reset
 End Sub
 
-'@TestMethod("Uncategorized")
+'@TestMethod("Object")
 Private Sub TestAddInstance()
     On Error GoTo TestFail
     Assert.AreSame srcTable, table.WrappedTable
@@ -61,7 +61,22 @@ TestFail:
     Resume TestExit
 End Sub
 
-'@TestMethod("Uncategorized")
+'@TestMethod("Object")
+Private Sub TestDefaultConstructor()
+    On Error GoTo TestFail
+    'check is instance but not the factory itself
+    Assert.IsTrue TypeOf table.Categoriser Is DefaultCategoriser
+    Assert.AreNotSame DefaultCategoriser, table.Categoriser
+TestExit:
+    '@Ignore UnhandledOnErrorResumeNext
+    On Error Resume Next
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Resume TestExit
+End Sub
+
+'@TestMethod("Object")
 Private Sub TestDeleteTable()
     On Error GoTo TestFail
     srcTable.Delete
@@ -277,3 +292,27 @@ TestFail:
     Resume TestExit
 End Sub
 
+
+'@TestMethod("Events")
+Private Sub TestDeleteListRow()
+    On Error GoTo TestFail
+    Dim target As Range
+    With srcTable.ListRows.Item(srcTable.ListRows.Count \ 2)
+        Set target = .Range
+        .Delete
+    End With
+        
+    Assert.AreEqual idRowDeleted, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idRowDeleted).Count, "Event count wrong"
+    '@Ignore IndexedDefaultMemberAccess
+    AreRangesSame Assert, target, logger.logEntry(idRowDeleted).Item(1)
+    
+
+TestExit:
+    '@Ignore UnhandledOnErrorResumeNext
+    On Error Resume Next
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Resume TestExit
+End Sub

@@ -85,11 +85,15 @@ Public Function Create(ByVal srcTable As ListObject, Optional ByVal eventsCatego
     End With
 End Function
 
+Public Property Get Categoriser() As IWorksheetChangeCategoriser
+    Set Categoriser = this.eventsCategoriser
+End Property
+
 Friend Sub Init(ByVal srcTable As ListObject, ByVal eventsCategoriser As IWorksheetChangeCategoriser)
     Set WrappedTable = srcTable
     Set this.eventsCategoriser = eventsCategoriser
     If eventsCategoriser Is Nothing Then
-        Set this.eventsCategoriser = New WorksheetEventsCategoriser
+        Set this.eventsCategoriser = DefaultCategoriser.Create(srcTable)
     Else
         Set this.eventsCategoriser = eventsCategoriser
     End If

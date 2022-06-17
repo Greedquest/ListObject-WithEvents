@@ -20,6 +20,7 @@ Public Enum EventIDS
     idColAdded = 2 ^ 1
     idColNameChange = 2 ^ 2
     idValueChanged = 2 ^ 3
+    idRowDeleted = 2 ^ 4
 End Enum
 
 '@Description "Bit mask for the types of events raised"

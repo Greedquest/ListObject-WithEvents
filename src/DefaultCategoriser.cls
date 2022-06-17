@@ -2,14 +2,27 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "WorksheetEventsCategoriser"
+Attribute VB_Name = "DefaultCategoriser"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
+Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Attribute VB_Ext_KEY = "Rubberduck" ,"Predeclared Class Module"
 '@Folder("VBAProject")
+'@PredeclaredId
 Option Explicit
 Implements IWorksheetChangeCategoriser
+
+Public Function Create(ByVal tableInitialState As ListObject) As DefaultCategoriser
+    If Not tableInitialState.Application.EnableEvents Then Err.Raise 5, Description:="Workbook must have events enabled in order to keep cache up-to-date"
+    With New DefaultCategoriser
+        Set Create = .Self
+    End With
+End Function
+
+Friend Property Get Self() As DefaultCategoriser
+    Set Self = Me
+End Property
 
 Private Sub IWorksheetChangeCategoriser_CategoriseChange(ByVal events As ITableEventsSource, ByVal target As Range, ByVal table As ListObject)
     CategoriseChange events, target, table
@@ -38,4 +51,5 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
         Debug.Assert False                       'not implemented
     End If
 End Sub
+
 
