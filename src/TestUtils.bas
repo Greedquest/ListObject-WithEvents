@@ -1,5 +1,5 @@
 Attribute VB_Name = "TestUtils"
-'@Folder("Testing")
+'@Folder "testing"
 Option Private Module
 Option Explicit
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''

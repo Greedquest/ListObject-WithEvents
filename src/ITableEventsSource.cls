@@ -9,7 +9,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-'@Folder("VBAProject")
+'@Folder "src"
 '@Interface
 
 Public Sub RaiseRowAdded(ByVal where As ListRow)

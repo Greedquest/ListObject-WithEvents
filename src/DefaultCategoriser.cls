@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'@Folder("VBAProject")
+'@Folder "src.categorisers"
 '@PredeclaredId
 Option Explicit
 Implements IWorksheetChangeCategoriser
@@ -67,5 +67,4 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
         Debug.Assert False                       'not implemented
     End If
 End Sub
-
 

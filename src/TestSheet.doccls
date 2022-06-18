@@ -1,4 +1,4 @@
-﻿'@Folder "Testing"
+﻿'@Folder "testing"
 Option Explicit
 
 Private Const TABLE_NAME As String = "TestTable"

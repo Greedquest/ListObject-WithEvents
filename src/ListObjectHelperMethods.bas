@@ -1,5 +1,5 @@
 Attribute VB_Name = "ListObjectHelperMethods"
-'@Folder("VBAProject")
+'@Folder "src.utils"
 Option Explicit
 Option Private Module
 

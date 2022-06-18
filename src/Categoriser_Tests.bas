@@ -3,7 +3,7 @@ Option Explicit
 Option Private Module
 
 '@TestModule
-'@Folder("Tests")
+'@Folder "tests"
 
 Private Assert As Rubberduck.PermissiveAssertClass
 '@Ignore VariableNotUsed
