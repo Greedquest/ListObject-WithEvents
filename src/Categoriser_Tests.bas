@@ -47,7 +47,6 @@ Private Sub TestCleanup()
     TestSheet.ResetTable
 End Sub
 
-
 '@TestMethod("DefaultCategoriser")
 Private Sub TestCachedCategoriserEventsOffRaises()
     Const ExpectedError As Long = 5

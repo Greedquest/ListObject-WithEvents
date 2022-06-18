@@ -20,6 +20,8 @@ Public Event RowAdded(ByVal where As ListRow)
 Public Event ColumnAdded(ByVal where As ListColumn)
 Public Event ColumnNameChanged(ByVal which As Range)
 Public Event DataValueChanged(ByVal where As Range)
+Public Event RowDeleted(ByVal prevLocation As Range)
+
 
 Private Type TTableWatcher
     unsafeWrappedTable As ListObject             'unsafe as it may become disconnected - use Get/Set instead
@@ -28,20 +30,25 @@ End Type
 
 Private this As TTableWatcher
 
-Private Sub ITableEventsSource_RaiseDataValueChanged(ByVal where As Range)
-    RaiseEvent DataValueChanged(where)
-End Sub
+Public Function Create(ByVal srcTable As ListObject, Optional ByVal eventsCategoriser As IWorksheetChangeCategoriser) As TableWatcher
+    With New TableWatcher
+        Set Create = .Self
+        .Init srcTable, eventsCategoriser
+    End With
+End Function
 
-Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)
-    RaiseEvent RowAdded(where)
-End Sub
+Friend Property Get Self() As TableWatcher
+    Set Self = Me
+End Property
 
-Private Sub ITableEventsSource_RaiseColumnAdded(ByVal where As ListColumn)
-    RaiseEvent ColumnAdded(where)
-End Sub
-
-Private Sub ITableEventsSource_RaiseColumnNameChanged(ByVal which As Range)
-    RaiseEvent ColumnNameChanged(which)
+Friend Sub Init(ByVal srcTable As ListObject, ByVal eventsCategoriser As IWorksheetChangeCategoriser)
+    Set WrappedTable = srcTable
+    Set this.eventsCategoriser = eventsCategoriser
+    If eventsCategoriser Is Nothing Then
+        Set this.eventsCategoriser = DefaultCategoriser.Create(srcTable)
+    Else
+        Set this.eventsCategoriser = eventsCategoriser
+    End If
 End Sub
 
 Friend Property Get wrappedTableParent() As Worksheet
@@ -74,31 +81,30 @@ Public Property Set WrappedTable(ByVal newValue As ListObject)
     End If
 End Property
 
-Friend Property Get Self() As TableWatcher
-    Set Self = Me
-End Property
-
-Public Function Create(ByVal srcTable As ListObject, Optional ByVal eventsCategoriser As IWorksheetChangeCategoriser) As TableWatcher
-    With New TableWatcher
-        Set Create = .Self
-        .Init srcTable, eventsCategoriser
-    End With
-End Function
-
 Public Property Get Categoriser() As IWorksheetChangeCategoriser
     Set Categoriser = this.eventsCategoriser
 End Property
 
-Friend Sub Init(ByVal srcTable As ListObject, ByVal eventsCategoriser As IWorksheetChangeCategoriser)
-    Set WrappedTable = srcTable
-    Set this.eventsCategoriser = eventsCategoriser
-    If eventsCategoriser Is Nothing Then
-        Set this.eventsCategoriser = DefaultCategoriser.Create(srcTable)
-    Else
-        Set this.eventsCategoriser = eventsCategoriser
-    End If
-End Sub
-
 Private Sub parentSheet_Change(ByVal target As Range)
     this.eventsCategoriser.CategoriseChange Me, target, WrappedTable
+End Sub
+
+Private Sub ITableEventsSource_RaiseDataValueChanged(ByVal where As Range)
+    RaiseEvent DataValueChanged(where)
+End Sub
+
+Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)
+    RaiseEvent RowAdded(where)
+End Sub
+
+Private Sub ITableEventsSource_RaiseColumnAdded(ByVal where As ListColumn)
+    RaiseEvent ColumnAdded(where)
+End Sub
+
+Private Sub ITableEventsSource_RaiseColumnNameChanged(ByVal which As Range)
+    RaiseEvent ColumnNameChanged(which)
+End Sub
+
+Private Sub ITableEventsSource_RaiseRowDeleted(ByVal prevLocation As Range)
+    RaiseEvent RowDeleted(prevLocation)
 End Sub

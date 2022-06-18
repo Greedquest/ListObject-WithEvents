@@ -63,7 +63,6 @@ TestFail:
     Resume TestExit
 End Sub
 
-
 '@TestMethod("Object")
 Private Sub TestDeleteTable()
     On Error GoTo TestFail
@@ -170,12 +169,12 @@ Private Sub TestImplicitAppendRowAtEndOfDatabody()
     On Error GoTo TestFail
     Dim newRowTrigger As Range
     Set newRowTrigger = srcTable.DataBodyRange.Cells(srcTable.ListRows.Count + 1, 1)
-    
+
     newRowTrigger.Value2 = "Foo"
-    
+
     Dim newRow As ListRow
     Set newRow = ListObjectHelperMethods.TargetToListRow(srcTable, newRowTrigger)
-    
+
     Assert.AreEqual idRowAdded, logger.EventClasses, "Wrong kind/ too many kinds of event raised"
     Assert.AreEqual 1, logger.logEntry(idRowAdded).Count, "Count wrong"
     AreListRowsSame Assert, newRow, logger.logEntry(idRowAdded).Item(1)
@@ -236,12 +235,12 @@ Private Sub TestImplicitAddColumnToRightEdge()
     On Error GoTo TestFail
     Dim newColTrigger As Range
     Set newColTrigger = srcTable.DataBodyRange.Cells(srcTable.ListRows.Count \ 2, srcTable.ListColumns.Count + 1)
-    
+
     newColTrigger.Value2 = "Foo"
-    
+
     Dim newCol As ListColumn
     Set newCol = ListObjectHelperMethods.TargetToListColumn(srcTable, newColTrigger)
-    
+
     Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
     Assert.AreEqual 1, logger.logEntry(idColAdded).Count, " Col add count wrong"
     Assert.AreEqual 1, logger.logEntry(idColNameChange).Count, "Name change count wrong"
@@ -264,12 +263,12 @@ Private Sub TestValueChangedSingleCell()
     Dim target As Range
     Set target = srcTable.DataBodyRange.Cells(srcTable.ListColumns.Count \ 2, srcTable.ListColumns.Count \ 2)
     target.Value2 = "foo"
-    
+
     Assert.AreEqual idValueChanged, logger.EventClasses, "Wrong event types raised"
     Assert.AreEqual 1, logger.logEntry(idValueChanged).Count, "Event count wrong"
     '@Ignore IndexedDefaultMemberAccess
     AreRangesSame Assert, target, logger.logEntry(idValueChanged).Item(1)
-    
+
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -280,7 +279,6 @@ TestFail:
     Resume TestExit
 End Sub
 
-
 '@TestMethod("Events")
 Private Sub TestDeleteListRow()
     On Error GoTo TestFail
@@ -289,12 +287,11 @@ Private Sub TestDeleteListRow()
         Set target = .Range
         .Delete
     End With
-        
+
     Assert.AreEqual idRowDeleted, logger.EventClasses, "Wrong event types raised"
     Assert.AreEqual 1, logger.logEntry(idRowDeleted).Count, "Event count wrong"
     '@Ignore IndexedDefaultMemberAccess
     AreRangesSame Assert, target, logger.logEntry(idRowDeleted).Item(1)
-    
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext

@@ -52,19 +52,25 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
         Exit Sub
     End If
     'cell in final row or column
-    If IndexRelativeToOrigin(table, target, byCol:=False) = table.ListRows.Count Then
-        events.RaiseRowAdded TargetToListRow(table, target)
-    ElseIf IndexRelativeToOrigin(table, target, byCol:=True) = table.ListColumns.Count Then
-        events.RaiseColumnAdded TargetToListColumn(table, target)
-    ElseIf target.Cells.CountLarge = 1 Then
-        events.RaiseDataValueChanged target
-        'entire row or column
-    ElseIf target.Rows.CountLarge = 1 Then
-        events.RaiseRowAdded TargetToListRow(table, target)
-    ElseIf target.Columns.CountLarge = 1 Then
-        events.RaiseColumnAdded TargetToListColumn(table, target)
-    Else
-        Debug.Assert False                       'not implemented
-    End If
-End Sub
 
+    Select Case table.ListRows.Count - this.cache.listRowCount
+        Case 1
+            events.RaiseRowAdded TargetToListRow(table, target)
+        Case -1
+            events.RaiseRowDeleted target
+        Case 0
+            Select Case table.ListColumns.Count - this.cache.listColCount
+                Case 1
+                    events.RaiseColumnAdded TargetToListColumn(table, target)
+                Case -1
+                    Debug.Assert False           'col delete not handled yet
+                Case 0
+                    events.RaiseDataValueChanged target
+                Case Else
+                    Debug.Assert False           'multiple cols not handled yet
+            End Select
+        Case Else
+            Debug.Assert False                   'multiple rows not handled yet
+    End Select
+
+End Sub

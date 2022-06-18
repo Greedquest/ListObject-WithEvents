@@ -21,6 +21,7 @@ Public Enum EventIDS
     idColNameChange = 2 ^ 2
     idValueChanged = 2 ^ 3
     idRowDeleted = 2 ^ 4
+    [_max]                                       'for static asserts
 End Enum
 
 '@Description "Bit mask for the types of events raised"
@@ -60,4 +61,8 @@ End Sub
 
 Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)
     logEntry(idRowAdded).Add where
+End Sub
+
+Private Sub ITableEventsSource_RaiseRowDeleted(ByVal prevLocation As Range)
+    logEntry(idRowDeleted).Add prevLocation
 End Sub
