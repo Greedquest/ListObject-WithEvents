@@ -44,6 +44,18 @@ Private Sub IWorksheetChangeCategoriser_CategoriseChange(ByVal events As ITableE
     CategoriseChange events, target, table
 End Sub
 
+'@Description "Updates cache and returns the change"
+Private Function updateToRowCache(ByVal table As ListObject) As Long
+    updateToRowCache = table.ListRows.Count - this.cache.listRowCount
+    this.cache.listRowCount = table.ListRows.Count
+End Function
+
+'@Description "Updates cache and returns the change"
+Private Function updateToColCache(ByVal table As ListObject) As Long
+    updateToColCache = table.ListColumns.Count - this.cache.listColCount
+    this.cache.listColCount = table.ListColumns.Count
+End Function
+
 Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As Range, ByVal table As ListObject)
     If table Is Nothing Then Exit Sub
     If Application.Intersect(target, table.Range) Is Nothing Then Exit Sub
@@ -53,17 +65,19 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
     End If
     'cell in final row or column
 
-    Select Case table.ListRows.Count - this.cache.listRowCount
+    Select Case updateToRowCache(table)
         Case 1
+            Debug.Assert target.Rows.Count = 1
             If IndexRelativeToOrigin(table, target, False) = table.ListRows.Count Then
                 events.RaiseRowAppended TargetToListRow(table, target)
             Else
                 events.RaiseRowAdded TargetToListRow(table, target)
             End If
         Case -1
+            Debug.Assert target.Rows.Count = 1
             events.RaiseRowDeleted target
         Case 0
-            Select Case table.ListColumns.Count - this.cache.listColCount
+            Select Case updateToColCache(table)
                 Case 1
                     events.RaiseColumnAdded TargetToListColumn(table, target)
                 Case -1

@@ -147,6 +147,25 @@ TestFail:
 End Sub
 
 '@TestMethod("Events")
+Private Sub TestAppendRowTwice()
+    On Error GoTo TestFail
+    srcTable.ListRows.Add
+    Dim newRow As ListRow
+    Set newRow = srcTable.ListRows.Add
+    Assert.AreEqual idRowAppended, logger.EventClasses, "Only 1 kind of event should have been raised"
+    Assert.AreEqual 2, logger.logEntry(idRowAppended).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, logger.logEntry(idRowAppended).Item(2)
+
+TestExit:
+    '@Ignore UnhandledOnErrorResumeNext
+    On Error Resume Next
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Resume TestExit
+End Sub
+
+'@TestMethod("Events")
 Private Sub TestInsertRow()
     'without cache it is impossible to differentiate between inserting and removing
     'so they should raise the same
@@ -321,7 +340,6 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
-
 
 '@TestMethod("Events")
 Private Sub TestDeleteMiddleColumn()
