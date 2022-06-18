@@ -67,7 +67,7 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
                 Case 1
                     events.RaiseColumnAdded TargetToListColumn(table, target)
                 Case -1
-                    events.RaiseColDeleted target
+                    events.RaiseColumnDeleted target
                 Case 0
                     events.RaiseDataValueChanged target
                 Case Else

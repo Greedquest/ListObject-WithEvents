@@ -25,8 +25,8 @@ Private Function loggerAsEventSource() As ITableEventsSource
     Set loggerAsEventSource = logger
 End Function
 
-Private Sub events_ColDeleted(ByVal prevLocation As Range)
-    loggerAsEventSource.RaiseColDeleted prevLocation
+Private Sub events_ColumnDeleted(ByVal prevLocation As Range)
+    loggerAsEventSource.RaiseColumnDeleted prevLocation
 End Sub
 
 Private Sub Events_ColumnAdded(ByVal where As ListColumn)

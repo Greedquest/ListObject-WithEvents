@@ -49,7 +49,7 @@ Public Property Get logEntry(ByVal eventID As EventIDS) As Collection
     Set logEntry = RawLog.Item(eventID)
 End Property
 
-Private Sub ITableEventsSource_RaiseColDeleted(ByVal prevLocation As Range)
+Private Sub ITableEventsSource_RaiseColumnDeleted(ByVal prevLocation As Range)
     logEntry(idColDeleted).Add prevLocation
 End Sub
 

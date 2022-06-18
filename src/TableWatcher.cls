@@ -19,7 +19,7 @@ Attribute parentSheet.VB_VarHelpID = -1
 Public Event RowAdded(ByVal where As ListRow)
 Public Event ColumnAdded(ByVal where As ListColumn)
 Public Event ColumnNameChanged(ByVal which As Range)
-Public Event ColDeleted(ByVal prevLocation As Range)
+Public Event ColumnDeleted(ByVal prevLocation As Range)
 Public Event DataValueChanged(ByVal where As Range)
 Public Event RowDeleted(ByVal prevLocation As Range)
 Public Event RowAppended(ByVal where As ListRow)
@@ -91,8 +91,8 @@ Private Sub parentSheet_Change(ByVal target As Range)
     this.eventsCategoriser.CategoriseChange Me, target, WrappedTable
 End Sub
 
-Private Sub ITableEventsSource_RaiseColDeleted(ByVal prevLocation As Range)
-    RaiseEvent ColDeleted(prevLocation)
+Private Sub ITableEventsSource_RaiseColumnDeleted(ByVal prevLocation As Range)
+    RaiseEvent ColumnDeleted(prevLocation)
 End Sub
 
 Private Sub ITableEventsSource_RaiseDataValueChanged(ByVal where As Range)

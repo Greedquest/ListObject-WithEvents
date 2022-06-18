@@ -30,5 +30,5 @@ End Sub
 Public Sub RaiseRowDeleted(ByVal prevLocation As Range)
 End Sub
 
-Public Sub RaiseColDeleted(ByVal prevLocation As Range)
+Public Sub RaiseColumnDeleted(ByVal prevLocation As Range)
 End Sub

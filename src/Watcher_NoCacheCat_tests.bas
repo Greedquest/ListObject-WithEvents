@@ -321,3 +321,28 @@ TestFail:
     Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
     Resume TestExit
 End Sub
+
+
+'@TestMethod("Events")
+Private Sub TestDeleteMiddleColumn()
+    On Error GoTo TestFail
+    Dim targetAddress As String
+    With srcTable.ListColumns.Item(srcTable.ListColumns.Count \ 2)
+        targetAddress = .Range.Address
+        .Delete
+    End With
+    Dim target As Range
+    Set target = table.wrappedTableParent.Range(targetAddress)
+    Assert.AreEqual idValueChanged, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idValueChanged).Count, "Event count wrong"
+    '@Ignore IndexedDefaultMemberAccess
+    AreRangesSame Assert, target, logger.logEntry(idValueChanged).Item(1)
+
+TestExit:
+    '@Ignore UnhandledOnErrorResumeNext
+    On Error Resume Next
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Resume TestExit
+End Sub
