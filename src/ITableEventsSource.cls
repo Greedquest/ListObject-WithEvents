@@ -15,6 +15,9 @@ Option Explicit
 Public Sub RaiseRowAdded(ByVal where As ListRow)
 End Sub
 
+Public Sub RaiseRowAppended(ByVal where As ListRow)
+End Sub
+
 Public Sub RaiseColumnAdded(ByVal where As ListColumn)
 End Sub
 
@@ -25,4 +28,7 @@ Public Sub RaiseDataValueChanged(ByVal where As Range)
 End Sub
 
 Public Sub RaiseRowDeleted(ByVal prevLocation As Range)
+End Sub
+
+Public Sub RaiseColDeleted(ByVal prevLocation As Range)
 End Sub

@@ -55,7 +55,11 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
 
     Select Case table.ListRows.Count - this.cache.listRowCount
         Case 1
-            events.RaiseRowAdded TargetToListRow(table, target)
+            If IndexRelativeToOrigin(table, target, False) = table.ListRows.Count Then
+                events.RaiseRowAppended TargetToListRow(table, target)
+            Else
+                events.RaiseRowAdded TargetToListRow(table, target)
+            End If
         Case -1
             events.RaiseRowDeleted target
         Case 0
@@ -63,7 +67,7 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
                 Case 1
                     events.RaiseColumnAdded TargetToListColumn(table, target)
                 Case -1
-                    Debug.Assert False           'col delete not handled yet
+                    events.RaiseColDeleted target
                 Case 0
                     events.RaiseDataValueChanged target
                 Case Else

@@ -21,6 +21,8 @@ Public Enum EventIDS
     idColNameChange = 2 ^ 2
     idValueChanged = 2 ^ 3
     idRowDeleted = 2 ^ 4
+    idRowAppended = 2 ^ 5
+    idColDeleted = 2 ^ 6
     [_max]                                       'for static asserts
 End Enum
 
@@ -47,6 +49,10 @@ Public Property Get logEntry(ByVal eventID As EventIDS) As Collection
     Set logEntry = RawLog.Item(eventID)
 End Property
 
+Private Sub ITableEventsSource_RaiseColDeleted(ByVal prevLocation As Range)
+    logEntry(idColDeleted).Add prevLocation
+End Sub
+
 Private Sub ITableEventsSource_RaiseColumnAdded(ByVal where As ListColumn)
     logEntry(idColAdded).Add where
 End Sub
@@ -61,6 +67,10 @@ End Sub
 
 Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)
     logEntry(idRowAdded).Add where
+End Sub
+
+Private Sub ITableEventsSource_RaiseRowAppended(ByVal where As ListRow)
+    logEntry(idRowAppended).Add where
 End Sub
 
 Private Sub ITableEventsSource_RaiseRowDeleted(ByVal prevLocation As Range)

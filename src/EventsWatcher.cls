@@ -17,13 +17,17 @@ Attribute events.VB_VarHelpID = -1
 Public logger As LoggingEventSink
 
 Private Sub Class_Initialize()
-    Const EVENTS_HANDLED As Long = 5             'increment when a new event handler is added
-    Debug.Assert EventIDS.[_max] - 1 = 2 ^ (EVENTS_HANDLED - 1)
+    Const EVENTS_HANDLED As Long = 7             'increment when a new event handler is added
+    static_assert_eventsHandled EVENTS_HANDLED, TypeName(Me)
 End Sub
 
 Private Function loggerAsEventSource() As ITableEventsSource
     Set loggerAsEventSource = logger
 End Function
+
+Private Sub events_ColDeleted(ByVal prevLocation As Range)
+    loggerAsEventSource.RaiseColDeleted prevLocation
+End Sub
 
 Private Sub Events_ColumnAdded(ByVal where As ListColumn)
     loggerAsEventSource.RaiseColumnAdded where
@@ -39,6 +43,10 @@ End Sub
 
 Private Sub Events_RowAdded(ByVal where As ListRow)
     loggerAsEventSource.RaiseRowAdded where
+End Sub
+
+Private Sub events_RowAppended(ByVal where As ListRow)
+    loggerAsEventSource.RaiseRowAppended where
 End Sub
 
 Private Sub events_RowDeleted(ByVal prevLocation As Range)

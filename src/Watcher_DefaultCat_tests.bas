@@ -144,13 +144,13 @@ TestFail:
 End Sub
 
 '@TestMethod("Events")
-Private Sub TestAddRow()
+Private Sub TestAppendRow()
     On Error GoTo TestFail
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add
-    Assert.AreEqual idRowAdded, logger.EventClasses, "Only 1 kind of event should have been raised"
-    Assert.AreEqual 1, logger.logEntry(idRowAdded).Count, "Count wrong"
-    AreListRowsSame Assert, newRow, logger.logEntry(idRowAdded).Item(1)
+    Assert.AreEqual idRowAppended, logger.EventClasses, "Only 1 kind of event should have been raised"
+    Assert.AreEqual 1, logger.logEntry(idRowAppended).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, logger.logEntry(idRowAppended).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -190,9 +190,9 @@ Private Sub TestImplicitAppendRowAtEndOfDatabody()
     Dim newRow As ListRow
     Set newRow = ListObjectHelperMethods.TargetToListRow(srcTable, newRowTrigger)
 
-    Assert.AreEqual idRowAdded, logger.EventClasses, "Wrong kind/ too many kinds of event raised"
-    Assert.AreEqual 1, logger.logEntry(idRowAdded).Count, "Count wrong"
-    AreListRowsSame Assert, newRow, logger.logEntry(idRowAdded).Item(1)
+    Assert.AreEqual idRowAppended, logger.EventClasses, "Wrong kind/ too many kinds of event raised"
+    Assert.AreEqual 1, logger.logEntry(idRowAppended).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, logger.logEntry(idRowAppended).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -308,6 +308,30 @@ Private Sub TestDeleteListRow()
     Assert.AreEqual 1, logger.logEntry(idRowDeleted).Count, "Event count wrong"
     '@Ignore IndexedDefaultMemberAccess
     AreRangesSame Assert, target, logger.logEntry(idRowDeleted).Item(1)
+
+TestExit:
+    '@Ignore UnhandledOnErrorResumeNext
+    On Error Resume Next
+    Exit Sub
+TestFail:
+    Assert.Fail "Test raised an error: #" & Err.Number & " - " & Err.Description
+    Resume TestExit
+End Sub
+
+'@TestMethod("Events")
+Private Sub TestDeleteMiddleColumn()
+    On Error GoTo TestFail
+    Dim targetAddress As String
+    With srcTable.ListColumns.Item(srcTable.ListColumns.Count \ 2)
+        targetAddress = .Range.Address
+        .Delete
+    End With
+    Dim target As Range
+    Set target = table.wrappedTableParent.Range(targetAddress)
+    Assert.AreEqual idColDeleted, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idColDeleted).Count, "Event count wrong"
+    '@Ignore IndexedDefaultMemberAccess
+    AreRangesSame Assert, target, logger.logEntry(idColDeleted).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext

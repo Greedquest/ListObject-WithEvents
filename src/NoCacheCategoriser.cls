@@ -24,7 +24,7 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
     End If
     'cell in final row or column means we are appending
     If IndexRelativeToOrigin(table, target, byCol:=False) = table.ListRows.Count Then
-        events.RaiseRowAdded TargetToListRow(table, target)
+        events.RaiseRowAppended TargetToListRow(table, target)
     ElseIf IndexRelativeToOrigin(table, target, byCol:=True) = table.ListColumns.Count Then
         events.RaiseColumnAdded TargetToListColumn(table, target)
     ElseIf target.Rows.Count = 1 Or target.Columns.Count = 1 Then
