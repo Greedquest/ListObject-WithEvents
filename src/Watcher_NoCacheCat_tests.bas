@@ -148,12 +148,14 @@ End Sub
 
 '@TestMethod("Events")
 Private Sub TestInsertRow()
+    'without cache it is impossible to differentiate between inserting and removing
+    'so they should raise the same
     On Error GoTo TestFail
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add(srcTable.ListRows.Count \ 2)
-    Assert.AreEqual idRowAdded, logger.EventClasses, "Only 1 kind of event should have been raised"
-    Assert.AreEqual 1, logger.logEntry(idRowAdded).Count, "Count wrong"
-    AreListRowsSame Assert, newRow, logger.logEntry(idRowAdded).Item(1)
+    Assert.AreEqual idValueChanged, logger.EventClasses, "Only 1 kind of event should have been raised"
+    Assert.AreEqual 1, logger.logEntry(idValueChanged).Count, "Count wrong"
+    AreRangesSame Assert, newRow.Range, logger.logEntry(idValueChanged).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -211,6 +213,7 @@ End Sub
 
 '@TestMethod("Events")
 Private Sub TestInsertCol()
+    Assert.Fail                                  'todo me - the colname changed might help :)
     On Error GoTo TestFail
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add(srcTable.ListColumns.Count \ 2)
@@ -282,16 +285,18 @@ End Sub
 '@TestMethod("Events")
 Private Sub TestDeleteListRow()
     On Error GoTo TestFail
-    Dim target As Range
+    Dim targetAddress As String
     With srcTable.ListRows.Item(srcTable.ListRows.Count \ 2)
-        Set target = .Range
+        targetAddress = .Range.Address
         .Delete
     End With
+    Dim target As Range
+    Set target = table.wrappedTableParent.Range(targetAddress)
 
-    Assert.AreEqual idRowDeleted, logger.EventClasses, "Wrong event types raised"
-    Assert.AreEqual 1, logger.logEntry(idRowDeleted).Count, "Event count wrong"
+    Assert.AreEqual idValueChanged, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idValueChanged).Count, "Event count wrong"
     '@Ignore IndexedDefaultMemberAccess
-    AreRangesSame Assert, target, logger.logEntry(idRowDeleted).Item(1)
+    AreRangesSame Assert, target, logger.logEntry(idValueChanged).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext

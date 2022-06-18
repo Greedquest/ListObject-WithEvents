@@ -22,20 +22,14 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
         events.RaiseColumnNameChanged target
         Exit Sub
     End If
-    'cell in final row or column
+    'cell in final row or column means we are appending
     If IndexRelativeToOrigin(table, target, byCol:=False) = table.ListRows.Count Then
         events.RaiseRowAdded TargetToListRow(table, target)
     ElseIf IndexRelativeToOrigin(table, target, byCol:=True) = table.ListColumns.Count Then
         events.RaiseColumnAdded TargetToListColumn(table, target)
-    ElseIf target.Cells.CountLarge = 1 Then
+    ElseIf target.Rows.Count = 1 Or target.Columns.Count = 1 Then
         events.RaiseDataValueChanged target
-        'entire row or column
-    ElseIf target.Rows.CountLarge = 1 Then
-        events.RaiseRowAdded TargetToListRow(table, target)
-    ElseIf target.Columns.CountLarge = 1 Then
-        events.RaiseColumnAdded TargetToListColumn(table, target)
     Else
-        Debug.Assert False                       'not implemented
+        Debug.Assert False                       'not implemented yet
     End If
 End Sub
-
