@@ -1,4 +1,4 @@
-Attribute VB_Name = "Table_Listener_Tests"
+Attribute VB_Name = "Watcher_DefaultCat_tests"
 '@IgnoreModule SelfAssignedDeclaration
 Option Explicit
 Option Private Module

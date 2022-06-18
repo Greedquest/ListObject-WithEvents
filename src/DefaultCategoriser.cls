@@ -7,22 +7,38 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Attribute VB_Ext_KEY = "Rubberduck" ,"Predeclared Class Module"
 '@Folder("VBAProject")
 '@PredeclaredId
 Option Explicit
 Implements IWorksheetChangeCategoriser
 
+Private Type TableCache
+    listRowCount As Long
+    listColCount As Long
+End Type
+
+Private Type TCategoriser
+    cache As TableCache
+End Type
+
+Private this As TCategoriser
+
 Public Function Create(ByVal tableInitialState As ListObject) As DefaultCategoriser
     If Not tableInitialState.Application.EnableEvents Then Err.Raise 5, Description:="Workbook must have events enabled in order to keep cache up-to-date"
     With New DefaultCategoriser
         Set Create = .Self
+        .Init tableInitialState
     End With
 End Function
 
 Friend Property Get Self() As DefaultCategoriser
     Set Self = Me
 End Property
+
+Friend Sub Init(ByVal tableInitialState As ListObject)
+    this.cache.listColCount = tableInitialState.ListColumns.Count
+    this.cache.listRowCount = tableInitialState.ListRows.Count
+End Sub
 
 Private Sub IWorksheetChangeCategoriser_CategoriseChange(ByVal events As ITableEventsSource, ByVal target As Range, ByVal table As ListObject)
     CategoriseChange events, target, table
