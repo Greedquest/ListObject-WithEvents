@@ -20,7 +20,8 @@ End Property
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     'this method runs once per module.
-    TestSheet.Reset
+    Application.ScreenUpdating = False
+    TestSheet.ResetTable
     Set Assert = New Rubberduck.PermissiveAssertClass
     Set Fakes = New Rubberduck.FakesProvider
 End Sub
@@ -28,6 +29,7 @@ End Sub
 '@ModuleCleanup
 Private Sub ModuleCleanup()
     'this method runs once per module.
+    Application.ScreenUpdating = True
     Set Assert = Nothing
     Set Fakes = Nothing
 End Sub
@@ -45,7 +47,7 @@ End Sub
 Private Sub TestCleanup()
     Set watcher = Nothing
     Set srcTable = Nothing
-    TestSheet.Reset
+    TestSheet.ResetTable
 End Sub
 
 '@TestMethod("Object")
@@ -113,7 +115,7 @@ Private Sub TestDelete_RestoreTable()
     On Error GoTo TestFail
     srcTable.Delete
     Assert.IsNothing table.WrappedTable
-    TestSheet.Reset
+    TestSheet.ResetTable
     Set srcTable = TestSheet.DemoTable
     Assert.IsNothing table.WrappedTable          'ensure it stays deleted
 TestExit:
@@ -131,7 +133,7 @@ Private Sub TestUnrelatedChangeInWorksheetHasNoEffect()
     '@Ignore IndexedDefaultMemberAccess
     srcTable.ListColumns(srcTable.ListColumns.Count).Range.Offset(0, 1).Insert
 
-    Assert.AreEqual 0, logger.log.Count, "too many events raised"
+    Assert.AreEqual 0, logger.RawLog.Count, "too many events raised"
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
     On Error Resume Next

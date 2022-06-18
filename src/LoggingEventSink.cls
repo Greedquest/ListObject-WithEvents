@@ -29,21 +29,21 @@ Attribute EventClasses.VB_Description = "Bit mask for the types of events raised
     Dim eventID As Variant
     Dim result As EventIDS
     result = idNone
-    For Each eventID In log.Keys
+    For Each eventID In RawLog.Keys
         result = result + CLng(eventID)
     Next eventID
     EventClasses = result
 End Property
 
-Public Property Get log() As Dictionary
-    Set log = eventsLog
+Public Property Get RawLog() As Dictionary
+    Set RawLog = eventsLog
 End Property
 
 Public Property Get logEntry(ByVal eventID As EventIDS) As Collection
-    If Not log.Exists(eventID) Then
-        Set log.Item(eventID) = New Collection
+    If Not RawLog.Exists(eventID) Then
+        Set RawLog.Item(eventID) = New Collection
     End If
-    Set logEntry = log.Item(eventID)
+    Set logEntry = RawLog.Item(eventID)
 End Property
 
 Private Sub ITableEventsSource_RaiseColumnAdded(ByVal where As ListColumn)

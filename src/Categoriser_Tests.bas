@@ -19,7 +19,7 @@ End Property
 '@ModuleInitialize
 Private Sub ModuleInitialize()
     'this method runs once per module.
-    TestSheet.Reset
+    TestSheet.ResetTable
     Set Assert = New Rubberduck.PermissiveAssertClass
     Set Fakes = New Rubberduck.FakesProvider
 End Sub
@@ -44,7 +44,7 @@ End Sub
 Private Sub TestCleanup()
     Set watcher = Nothing
     Set srcTable = Nothing
-    TestSheet.Reset
+    TestSheet.ResetTable
 End Sub
 
 

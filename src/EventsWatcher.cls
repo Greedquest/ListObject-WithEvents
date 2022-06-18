@@ -8,7 +8,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '@Folder("Testing")
-'@IgnoreModule EncapsulatePublicField
+'@IgnoreModule FunctionReturnValueAlwaysDiscarded, FunctionReturnValueDiscarded, EncapsulatePublicField
 Option Explicit
 
 Public WithEvents events As TableWatcher
