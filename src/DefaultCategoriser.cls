@@ -71,7 +71,7 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
             If IndexRelativeToOrigin(table, target, False) = table.ListRows.Count Then
                 events.RaiseRowAppended TargetToListRow(table, target)
             Else
-                events.RaiseRowAdded TargetToListRow(table, target)
+                events.RaiseRowInserted TargetToListRow(table, target)
             End If
         Case -1
             Debug.Assert target.Rows.Count = 1
@@ -79,7 +79,7 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
         Case 0
             Select Case updateToColCache(table)
                 Case 1
-                    events.RaiseColumnAdded TargetToListColumn(table, target)
+                    events.RaiseColumnInserted TargetToListColumn(table, target)
                 Case -1
                     events.RaiseColumnDeleted target
                 Case 0

@@ -12,13 +12,16 @@ Option Explicit
 '@Folder "src"
 '@Interface
 
-Public Sub RaiseRowAdded(ByVal where As ListRow)
+Public Sub RaiseRowInserted(ByVal where As ListRow)
 End Sub
 
 Public Sub RaiseRowAppended(ByVal where As ListRow)
 End Sub
 
-Public Sub RaiseColumnAdded(ByVal where As ListColumn)
+Public Sub RaiseColumnInserted(ByVal where As ListColumn)
+End Sub
+
+Public Sub RaiseColumnAppended(ByVal where As ListColumn)
 End Sub
 
 Public Sub RaiseColumnNameChanged(ByVal which As Range)

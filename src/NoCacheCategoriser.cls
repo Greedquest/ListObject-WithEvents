@@ -26,9 +26,12 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
     If IndexRelativeToOrigin(table, target, byCol:=False) = table.ListRows.Count Then
         events.RaiseRowAppended TargetToListRow(table, target)
     ElseIf IndexRelativeToOrigin(table, target, byCol:=True) = table.ListColumns.Count Then
-        events.RaiseColumnAdded TargetToListColumn(table, target)
-    ElseIf target.Rows.Count = 1 Or target.Columns.Count = 1 Then
+        events.RaiseColumnAppended TargetToListColumn(table, target)
+    ElseIf target.Rows.Count = 1 Then
         events.RaiseDataValueChanged target
+    ElseIf target.Columns.Count = 1 Then
+        'expect only databodyrange so shift things down by one
+        events.RaiseDataValueChanged target.Offset(1).Resize(target.Rows.CountLarge - 1)
     Else
         Debug.Assert False                       'not implemented yet
     End If

@@ -16,13 +16,14 @@ Implements ITableEventsSource
 Private WithEvents parentSheet As Worksheet
 Attribute parentSheet.VB_VarHelpID = -1
 
-Public Event RowAdded(ByVal where As ListRow)
-Public Event ColumnAdded(ByVal where As ListColumn)
-Public Event ColumnNameChanged(ByVal which As Range)
-Public Event ColumnDeleted(ByVal prevLocation As Range)
-Public Event DataValueChanged(ByVal where As Range)
+Public Event RowInserted(ByVal where As ListRow)
 Public Event RowDeleted(ByVal prevLocation As Range)
 Public Event RowAppended(ByVal where As ListRow)
+Public Event ColumnInserted(ByVal where As ListColumn)
+Public Event ColumnDeleted(ByVal prevLocation As Range)
+Public Event ColumnAppended(ByVal where As ListColumn)
+Public Event ColumnNameChanged(ByVal which As Range)
+Public Event DataValueChanged(ByVal where As Range)
 
 
 Private Type TTableWatcher
@@ -87,8 +88,8 @@ Public Property Get Categoriser() As IWorksheetChangeCategoriser
     Set Categoriser = this.eventsCategoriser
 End Property
 
-Private Sub parentSheet_Change(ByVal target As Range)
-    this.eventsCategoriser.CategoriseChange Me, target, WrappedTable
+Private Sub ITableEventsSource_RaiseColumnAppended(ByVal where As ListColumn)
+    RaiseEvent ColumnAppended(where)
 End Sub
 
 Private Sub ITableEventsSource_RaiseColumnDeleted(ByVal prevLocation As Range)
@@ -99,12 +100,12 @@ Private Sub ITableEventsSource_RaiseDataValueChanged(ByVal where As Range)
     RaiseEvent DataValueChanged(where)
 End Sub
 
-Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)
-    RaiseEvent RowAdded(where)
+Private Sub ITableEventsSource_RaiseRowInserted(ByVal where As ListRow)
+    RaiseEvent RowInserted(where)
 End Sub
 
-Private Sub ITableEventsSource_RaiseColumnAdded(ByVal where As ListColumn)
-    RaiseEvent ColumnAdded(where)
+Private Sub ITableEventsSource_RaiseColumnInserted(ByVal where As ListColumn)
+    RaiseEvent ColumnInserted(where)
 End Sub
 
 Private Sub ITableEventsSource_RaiseColumnNameChanged(ByVal which As Range)
@@ -117,4 +118,8 @@ End Sub
 
 Private Sub ITableEventsSource_RaiseRowAppended(ByVal where As ListRow)
     RaiseEvent RowAppended(where)
+End Sub
+
+Private Sub parentSheet_Change(ByVal target As Range)
+    this.eventsCategoriser.CategoriseChange Me, target, WrappedTable
 End Sub

@@ -10,19 +10,20 @@ Attribute VB_Exposed = False
 '@Folder "testing"
 Option Explicit
 
-Implements ITableEventsSource
+Implements ITableEventsSource 'REMEMBER to update eventIDs too!
 
 Private eventsLog As New Dictionary
 
 Public Enum EventIDS
     idNone = 0
-    idRowAdded = 2 ^ 0
-    idColAdded = 2 ^ 1
+    idRowInserted = 2 ^ 0
+    idColInserted = 2 ^ 1
     idColNameChange = 2 ^ 2
     idValueChanged = 2 ^ 3
     idRowDeleted = 2 ^ 4
     idRowAppended = 2 ^ 5
     idColDeleted = 2 ^ 6
+    idColAppended = 2 ^ 7
     [_max]                                       'for static asserts
 End Enum
 
@@ -49,12 +50,16 @@ Public Property Get logEntry(ByVal eventID As EventIDS) As Collection
     Set logEntry = RawLog.Item(eventID)
 End Property
 
+Private Sub ITableEventsSource_RaiseColumnAppended(ByVal where As ListColumn)
+    logEntry(idColAppended).Add where
+End Sub
+
 Private Sub ITableEventsSource_RaiseColumnDeleted(ByVal prevLocation As Range)
     logEntry(idColDeleted).Add prevLocation
 End Sub
 
-Private Sub ITableEventsSource_RaiseColumnAdded(ByVal where As ListColumn)
-    logEntry(idColAdded).Add where
+Private Sub ITableEventsSource_RaiseColumnInserted(ByVal where As ListColumn)
+    logEntry(idColInserted).Add where
 End Sub
 
 Private Sub ITableEventsSource_RaiseColumnNameChanged(ByVal which As Range)
@@ -65,8 +70,8 @@ Private Sub ITableEventsSource_RaiseDataValueChanged(ByVal where As Range)
     logEntry(idValueChanged).Add where
 End Sub
 
-Private Sub ITableEventsSource_RaiseRowAdded(ByVal where As ListRow)
-    logEntry(idRowAdded).Add where
+Private Sub ITableEventsSource_RaiseRowInserted(ByVal where As ListRow)
+    logEntry(idRowInserted).Add where
 End Sub
 
 Private Sub ITableEventsSource_RaiseRowAppended(ByVal where As ListRow)

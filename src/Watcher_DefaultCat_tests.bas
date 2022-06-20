@@ -185,9 +185,9 @@ Private Sub TestInsertRow()
     On Error GoTo TestFail
     Dim newRow As ListRow
     Set newRow = srcTable.ListRows.Add(srcTable.ListRows.Count \ 2)
-    Assert.AreEqual idRowAdded, logger.EventClasses, "Only 1 kind of event should have been raised"
-    Assert.AreEqual 1, logger.logEntry(idRowAdded).Count, "Count wrong"
-    AreListRowsSame Assert, newRow, logger.logEntry(idRowAdded).Item(1)
+    Assert.AreEqual idRowInserted, logger.EventClasses, "Only 1 kind of event should have been raised"
+    Assert.AreEqual 1, logger.logEntry(idRowInserted).Count, "Count wrong"
+    AreListRowsSame Assert, newRow, logger.logEntry(idRowInserted).Item(1)
 
 TestExit:
     '@Ignore UnhandledOnErrorResumeNext
@@ -227,10 +227,10 @@ Private Sub TestColAdded()
     On Error GoTo TestFail
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add
-    Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
-    Assert.AreEqual 1, logger.logEntry(idColAdded).Count, " Col add count wrong"
+    Assert.AreEqual idColInserted + idColNameChange, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idColInserted).Count, " Col add count wrong"
     Assert.AreEqual 1, logger.logEntry(idColNameChange).Count, "Name change count wrong"
-    AreListColumnsSame Assert, newCol, logger.logEntry(idColAdded).Item(1)
+    AreListColumnsSame Assert, newCol, logger.logEntry(idColInserted).Item(1)
     '@Ignore IndexedDefaultMemberAccess
     AreRangesSame Assert, newCol.Range.Cells(1), logger.logEntry(idColNameChange).Item(1)
 
@@ -248,10 +248,10 @@ Private Sub TestInsertCol()
     On Error GoTo TestFail
     Dim newCol As ListColumn
     Set newCol = srcTable.ListColumns.Add(srcTable.ListColumns.Count \ 2)
-    Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
-    Assert.AreEqual 1, logger.logEntry(idColAdded).Count, " Col add count wrong"
+    Assert.AreEqual idColInserted + idColNameChange, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idColInserted).Count, " Col add count wrong"
     Assert.AreEqual 1, logger.logEntry(idColNameChange).Count, "Name change count wrong"
-    AreListColumnsSame Assert, newCol, logger.logEntry(idColAdded).Item(1)
+    AreListColumnsSame Assert, newCol, logger.logEntry(idColInserted).Item(1)
     '@Ignore IndexedDefaultMemberAccess
     AreRangesSame Assert, newCol.Range.Cells(1), logger.logEntry(idColNameChange).Item(1)
 
@@ -275,10 +275,10 @@ Private Sub TestImplicitAddColumnToRightEdge()
     Dim newCol As ListColumn
     Set newCol = ListObjectHelperMethods.TargetToListColumn(srcTable, newColTrigger)
 
-    Assert.AreEqual idColAdded + idColNameChange, logger.EventClasses, "Wrong event types raised"
-    Assert.AreEqual 1, logger.logEntry(idColAdded).Count, " Col add count wrong"
+    Assert.AreEqual idColInserted + idColNameChange, logger.EventClasses, "Wrong event types raised"
+    Assert.AreEqual 1, logger.logEntry(idColInserted).Count, " Col add count wrong"
     Assert.AreEqual 1, logger.logEntry(idColNameChange).Count, "Name change count wrong"
-    AreListColumnsSame Assert, newCol, logger.logEntry(idColAdded).Item(1)
+    AreListColumnsSame Assert, newCol, logger.logEntry(idColInserted).Item(1)
     '@Ignore IndexedDefaultMemberAccess
     AreRangesSame Assert, newCol.Range.Cells(1), logger.logEntry(idColNameChange).Item(1)
 
