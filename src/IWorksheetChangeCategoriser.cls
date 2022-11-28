@@ -16,5 +16,3 @@ Public Sub CategoriseChange( _
        ByVal table As ListObject _
        )
 End Sub
-
-
