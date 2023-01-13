@@ -8,7 +8,7 @@ This repo follows Test Driven Development. As such all of its features are self 
  - [_NoCache_ Categoriser tests](src/Watcher_NoCacheCat_tests.bas)
  
 ## Quickstart
-Clone Repo or download as Zip (see Issue #1 for zip download). Then add all the files to your project by clicking and dragging onto the project explorer. Ignore `.doccls` files and `_tests` files unless testing (see below).
+Clone Repo or download as Zip (see https://github.com/Greedquest/ListObject-WithEvents/issues/2 for details on Zip download). Then add all the files to your project by clicking and dragging onto the project explorer. Ignore `.doccls` files and `_tests` files unless testing (see below).
 
 ```vba
 Private WithEvents fooTableEvents As TableWatcher
