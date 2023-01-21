@@ -14,7 +14,7 @@ Clone Repo or download as Zip (see https://github.com/Greedquest/ListObject-With
 Private WithEvents fooTableEvents As TableWatcher
 
 Sub StartListening()
-   Set myTable = TableWatcher.Create(Sheet1.ListObjects("foo"))
+   Set fooTableEvents = TableWatcher.Create(Sheet1.ListObjects("foo"))
 End Sub
 
 Private Sub fooTableEvents_RowAppended(ByVal where As ListRow)
