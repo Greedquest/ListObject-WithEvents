@@ -13,6 +13,7 @@ Option Explicit
 
 Implements ITableEventsSource
 
+'@Ignore MissingMemberAnnotation
 Private WithEvents parentSheet As Worksheet
 Attribute parentSheet.VB_VarHelpID = -1
 

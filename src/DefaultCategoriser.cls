@@ -46,12 +46,14 @@ End Sub
 
 '@Description "Updates cache and returns the change"
 Private Function updateToRowCache(ByVal table As ListObject) As Long
+Attribute updateToRowCache.VB_Description = "Updates cache and returns the change"
     updateToRowCache = table.ListRows.Count - this.cache.listRowCount
     this.cache.listRowCount = table.ListRows.Count
 End Function
 
 '@Description "Updates cache and returns the change"
 Private Function updateToColCache(ByVal table As ListObject) As Long
+Attribute updateToColCache.VB_Description = "Updates cache and returns the change"
     updateToColCache = table.ListColumns.Count - this.cache.listColCount
     this.cache.listColCount = table.ListColumns.Count
 End Function
@@ -79,7 +81,12 @@ Public Sub CategoriseChange(ByVal events As ITableEventsSource, ByVal target As 
         Case 0
             Select Case updateToColCache(table)
                 Case 1
-                    events.RaiseColumnInserted TargetToListColumn(table, target)
+                    Debug.Assert target.Columns.Count = 1
+                    If IndexRelativeToOrigin(table, target, True) = table.ListColumns.Count Then
+                        events.RaiseColumnAppended TargetToListColumn(table, target)
+                    Else
+                        events.RaiseColumnInserted TargetToListColumn(table, target)
+                    End If
                 Case -1
                     events.RaiseColumnDeleted target
                 Case 0

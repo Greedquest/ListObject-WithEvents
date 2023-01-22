@@ -57,6 +57,7 @@ Public Function printf(ByVal mask As String, ParamArray tokens() As Variant) As 
     printf = mask
 End Function
 
+'@Ignore ParameterNotUsed: for intellisense
 Public Sub static_assert_eventsHandled(ByVal expected As Long, ByVal source As String)
     Debug.Assert EventIDS.[_max] - 1 = 2 ^ (expected - 1)
 End Sub

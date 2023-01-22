@@ -11,6 +11,7 @@ Attribute VB_Exposed = False
 '@IgnoreModule FunctionReturnValueAlwaysDiscarded, FunctionReturnValueDiscarded, EncapsulatePublicField
 Option Explicit
 
+'@Ignore MissingMemberAnnotation
 Public WithEvents events As TableWatcher
 Attribute events.VB_VarHelpID = -1
 
