@@ -1,0 +1,3 @@
+*.bas eol=crlf linguist-language=VBA
+*.cls eol=crlf linguist-language=VBA
+*.doccls eol=crlf linguist-language=VBA
