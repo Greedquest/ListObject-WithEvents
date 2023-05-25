@@ -1,7 +1,7 @@
 
 ---
-
-**_Work in progress:_** _some to-be-implemented events (e.g. multiple rows/cols added at once) currently will trigger `Debug.Assert`s rather than gracefully failing. As a result this code is not safe for use in the wild. My recommendation is to replace the `Debug.Assert False` lines in the `[Default/NoCache]Categoriser.cls` with `events.RaiseDataValueChanged target` to raise a generic event, if you want to use this code right now. Most events are implemented._
+# 🚧🏗️🚨
+ **_Work in progress:_** _some to-be-implemented events (e.g. multiple rows/cols added at once) currently will trigger `Debug.Assert`s rather than gracefully failing. As a result this code is not safe for use in the wild. My recommendation is to replace the `Debug.Assert False` lines in the `[Default/NoCache]Categoriser.cls` with `events.RaiseDataValueChanged target` to raise a generic event, if you want to use this code right now. Many events are implemented (see #4 )._ 
 
 ---
 
